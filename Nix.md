@@ -45,12 +45,59 @@ nix-shell -p cmatrix
 
 ---
 
-## **Atomicity**
+## **Nix store**
 
 ```
 /nix/store/b6gvzjyb2pg0kjfwrjmg1vfhh54ad73z-firefox-33.1/
 ```
+Contains all the build products including binaries, libraries, configurations files... 
+Permit the installation of multiple package version and configuration.
+Are immutable, isolated and atomic
 
+---
 
+# **Declarative approach**
+`my-python-app/app.py`
+```python
+#!/usr/bin/env python
+
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return {
+        "message": "Hello, Nix!"
+    }
+
+def run():
+    app.run(host="0.0.0.0", port=5000)
+
+if __name__ == "__main__":
+    run()
+```
+---
+
+# **Declarative approach**
+`my-python-app/shell.nix`
+```Nix
+with import <nixpkgs> {};
+
+stdenv.mkDerivation rec {
+  name = "python-environment";
+
+  buildInputs = [ pkgs.python311 pkgs.python311Packages.flask ];
+
+  shellHook = ''
+    export FLASK_DEBUG=1
+    export FLASK_APP="app.py"
+  '';
+}
+```
+
+---
+# **Using Nix within Docker**
+---
 
 
