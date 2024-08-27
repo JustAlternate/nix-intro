@@ -36,12 +36,12 @@ sh <(curl -L https://nixos.org/nix/install) --daemon
 Once installed, one can **temporarly** install a package using:  
 
 ```bash
-nix-shell -p cmatrix
+nix-shell -p kubectl
 ```
 
 ---
 
-![bg 75%](/home/justalternate/screenshots/20240825-18:14:02.png)
+![bg 75%](https://repology.org/graph/map_repo_size_fresh.svg)
 
 ---
 
@@ -56,7 +56,7 @@ Are immutable, isolated and atomic
 
 ---
 
-# **Declarative approach**
+## **Declarative approach for development**
 `my-python-app/app.py`
 ```python
 #!/usr/bin/env python
@@ -79,7 +79,7 @@ if __name__ == "__main__":
 ```
 ---
 
-# **Declarative approach**
+## **Declarative approach for development**
 `my-python-app/shell.nix`
 ```Nix
 with import <nixpkgs> {};
@@ -87,14 +87,33 @@ with import <nixpkgs> {};
 stdenv.mkDerivation rec {
   name = "python-environment";
 
-  buildInputs = [ pkgs.python311 pkgs.python311Packages.flask ];
+  buildInputs = [ 
+    pkgs.python311 
+    pkgs.python311Packages.flask
+    pkgs.docker
+    pkgs.docker-compose
+  ];
 
   shellHook = ''
-    export FLASK_DEBUG=1
     export FLASK_APP="app.py"
+
+    echo "Welcome to my-python-app environment"
+
+    docker-compose up -d
+    trap 'docker-compose down' EXIT
+    
   '';
 }
 ```
+
+---
+
+## **Flakes**
+
+Experimental feature of Nix (but is vastly used by the majority of the community)
+Allow for a standardized project structure.
+Make it easier to write reproducible nix expression.
+Pin versions of dependencies in a lock file.
 
 ---
 # **Using Nix within Docker**
