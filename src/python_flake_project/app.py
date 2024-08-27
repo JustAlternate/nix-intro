@@ -4,7 +4,12 @@ from flask import Flask
 
 app = Flask(__name__)
 
+print("erzer")
+
+
 @app.route("/")
+
+
 def hello():
     return {
         "message": "Hello, Nix!"

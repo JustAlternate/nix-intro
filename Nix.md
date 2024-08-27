@@ -51,7 +51,7 @@ nix-shell -p kubectl
 /nix/store/b6gvzjyb2pg0kjfwrjmg1vfhh54ad73z-firefox-33.1/
 ```
 Contains all the build products including binaries, libraries, configurations files... 
-Permit the installation of multiple package version and configuration.
+Permit the installation of multiple packages with different versions and configurations.
 Are immutable, isolated and atomic
 
 ---
@@ -116,6 +116,55 @@ Make it easier to write reproducible nix expression.
 Pin versions of dependencies in a lock file.
 
 ---
+
+## **Flake example for making a reproducible dev environment**
+`flake.nix`
+```Nix
+{
+  description = "A Python project with Nix Flakes";
+  inputs = {
+    nixpkgs.url = "nixpkgs/nixpkgs-24.05-darwin";
+  };
+  outputs = { nixpkgs }:
+    let
+      system = "aarch64-darwin";
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+    {
+      # Define a development shell for the project (callable with nix develop)
+      devShells.${system}.default = pkgs.mkShell {
+        buildInputs = with pkgs;
+          [
+            # Packages needed to dev in the project
+            python311
+            python311Packages.flask
+            docker
+            docker-compose
+            # tools
+            jq
+            # Linter / formatters...
+            black
+            ruff
+            # git shenanigans
+            git
+            pre-commit
+          ];
+
+        shellHook = ''
+          echo "Start the postgres local db"
+          docker compose up -d
+          trap 'docker compose down' EXIT
+
+          echo "Configure pre-commit to reduce circle-ci costs"
+          pre-commit install --hook-type pre-commit
+        '';
+      };
+    };
+}
+```
+---
+
+
 # **Using Nix within Docker**
 ---
 
