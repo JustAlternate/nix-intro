@@ -111,9 +111,14 @@ stdenv.mkDerivation rec {
 ## **Flakes**
 
 Experimental feature of Nix (but is vastly used by the majority of the community)
+
 Allow for a standardized project structure.
+
 Make it easier to write reproducible nix expression.
+
 Pin versions of dependencies in a lock file.
+
+![bg right:40% 60%](https://i.redd.it/m1nul7hzvcca1.png)
 
 ---
 
@@ -127,8 +132,7 @@ Pin versions of dependencies in a lock file.
   };
   outputs = { nixpkgs }:
     let
-      system = "aarch64-darwin";
-      pkgs = nixpkgs.legacyPackages.${system};
+      pkgs = nixpkgs.legacyPackages.aarch64-darwin;
     in
     {
       # Define a development shell for the project (callable with nix develop)
@@ -137,8 +141,7 @@ Pin versions of dependencies in a lock file.
           [
             # Packages needed to dev in the project
             python311
-            python311Packages.flask
-            docker
+            ...
             docker-compose
             # tools
             jq
@@ -164,8 +167,92 @@ Pin versions of dependencies in a lock file.
 ```
 ---
 
+# **Docker or Nix ?**
 
-# **Using Nix within Docker**
+Docker is repeatable, but not reproducible because it relies on sources that change over time (such as apt repositories)
+
+One docker build can have different output depending when it is done.
+
+Because of:
+```Dockerfile
+FROM debian:stable
+RUN apt-get update
+RUN apt-get install nginx
+```
+---
+
+Nix on the other hand is reproducible because it can pins down dependencies versions using our flake.lock
+
+Or by overriding a package version:
+
+```Nix
+{ pkgs ? import <nixpkgs> { } }:
+let
+  version = "1.20.2";
+in
+pkgs.mkShell {
+  buildInputs = [
+    (pkgs.nginx.overrideAttrs (oldAttrs: {
+      inherit version;
+      src = pkgs.fetchurl {
+        url = "https://nginx.org/download/nginx-${version}.tar.gz";
+        sha256 = "sha256-lYh2dXeCGQoWU+FNwm38e6Jj3jEOBMET4R6X0b70WkI=";
+      };
+    }))
+  ];
+}
+```
+---
+## **Using Docker within Nix**
+```Dockerfile
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY . .
+
+RUN pip install flask
+
+EXPOSE 5000
+
+ENV FLASK_APP=app.py
+
+CMD ["python", "app.py"]
+```
+---
+
+## **Using Docker within Nix**
+
+`pkgs.dockerTools` is a set of functions for creating and manipulating Docker images (note that Docker is not used behind the hood to perform these functions)
+
+```Nix
+{ pkgs ? import <nixpkgs> { } }:
+pkgs.dockerTools.buildLayeredImage {
+  name = "flask-app";
+  config = {
+    Cmd = [
+      (pkgs.lib.getExe (pkgs.python3.withPackages (ps: with ps; [ flask ])))
+      ./app.py
+    ];
+    ExposedPorts = { "5000/tcp" = { }; };
+  };
+}
+```
+
+```
+nix-build DockerInNix.nix
+docker run < result
+```
+
+---
+
+## **Using Nix within Docker**
+---
+
+# Nix or Ansible ?
+
+![bg right:50% 50%](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fexternal-preview.redd.it%2Fp45HRVNvA8N7CE_YestAW2BWF_jqw8o8E8W09pz7mNo.jpg%3Fauto%3Dwebp%26s%3D0938ce5b6f4c9384b36eeaa7c104e6b3acb5aba3&f=1&nofb=1&ipt=7a4d693534a41e8be2914524e04e9223ccc62bd35a4eba28f7e0ba7cec79268a&ipo=images)
+
 ---
 
 
