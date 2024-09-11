@@ -19,9 +19,9 @@ https://nixos.org/
 - You upgrade a package in your system and find that others packages are broken because a shared dependency got upgraded aswell...
 - Now your system is broken and there is no undo button :/
 - You want to migrate a system installation and configuration to another place but don't want to redo all the steps you did for installing it..
-- You installed a lot of dependencies during an installation but don't want to bother cleaning it all manually  
-- You have a team who build massive services that takes hours to setup for development and every time 
-- You want to embrace real reproducibility
+- You installed a lot of dependencies during an installation but don't want to bother cleaning it all manually.
+- You have a team who build massive services that takes hours to setup for development.
+- You want to embrace real reproducibility.
 
 ---
 <style scoped>
@@ -66,7 +66,7 @@ section {
 
 ---
 
-## **Nix installation**
+## **Nix easy installation**
 
 ```bash
 sh <(curl -L https://nixos.org/nix/install) --daemon
