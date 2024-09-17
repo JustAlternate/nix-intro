@@ -1,6 +1,6 @@
 with import <nixpkgs> { };
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   name = "python-environment";
 
   buildInputs = [
@@ -8,16 +8,16 @@ stdenv.mkDerivation rec {
     pkgs.python311Packages.flask
     pkgs.docker
     pkgs.docker-compose
-
   ];
 
   shellHook = ''
-    export FLASK_DEBUG=1
     export FLASK_APP="app.py"
+    export FLASK_DEBUG=1
 
-    docker compose up -d
+    echo "Welcome to my-python-app environment"
 
+    # docker compose up -d
     # Ensure Docker services stop when shell exits
-    trap 'docker compose down' EXIT
+    # trap 'docker compose down' EXIT
   '';
 }

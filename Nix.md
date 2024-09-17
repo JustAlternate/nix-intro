@@ -17,10 +17,10 @@ https://nixos.org/
 # **The Problem**
 
 - You upgrade a package in your system and find that others packages are broken because a shared dependency got upgraded aswell...
-- Now your system is broken and there is no undo button :/
-- You want to migrate a system installation and configuration to another place but don't want to redo all the steps you did for installing it..
+- Your system is broken and there is no undo button...
+- You want to migrate a system installation and configuration to another machine but don't want to redo all the steps you did for installing it..
 - You installed a lot of dependencies during an installation but don't want to bother cleaning it all manually.
-- You have a team who build massive services that takes hours to setup for development.
+- You have a team who build massive services which always take hours to setup for development.
 - You want to embrace real reproducibility.
 
 ---
@@ -37,7 +37,7 @@ section {
 
 - Reproducible development environments.
 - <span class="gray">Easy installation of software over URLs.</span>
-- Easy transfer of software environments between computers.
+- Easy transfer of development environments between machines.
 - Declarative and reproducible specification of Linux machines.
 - <span class="gray">Reproducible integration testing using virtual machines.</span>
 - Avoidance of version conflicts with already installed software.
@@ -72,7 +72,7 @@ section {
 sh <(curl -L https://nixos.org/nix/install) --daemon
 ```
 
-Once installed, one can **temporarly** install a package using:  
+Once installed, one can **temporarly** install a package using:
 
 ```bash
 nix-shell -p kubectl
@@ -123,11 +123,11 @@ if __name__ == "__main__":
 ```Nix
 with import <nixpkgs> {};
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   name = "python-environment";
 
-  buildInputs = [ 
-    pkgs.python311 
+  buildInputs = [
+    pkgs.python311
     pkgs.python311Packages.flask
     pkgs.docker
     pkgs.docker-compose
@@ -138,9 +138,9 @@ stdenv.mkDerivation rec {
 
     echo "Welcome to my-python-app environment"
 
-    docker-compose up -d
-    trap 'docker-compose down' EXIT
-    
+    # docker compose up -d
+    # Ensure Docker services stop when shell exits
+    # trap 'docker compose down' EXIT
   '';
 }
 ```
@@ -340,6 +340,8 @@ docker run < result
 
 ## **Using Nix within Docker**
 
+TODO
+
 ---
 # Nix tools
 <style scoped>
@@ -364,17 +366,21 @@ section {
 
 # NixOS
 
+TODO
 
 ---
 
-
-# Nix or Ansible ?
+# Nix and Ansible ?
 
 ![bg right:50% 50%](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fexternal-preview.redd.it%2Fp45HRVNvA8N7CE_YestAW2BWF_jqw8o8E8W09pz7mNo.jpg%3Fauto%3Dwebp%26s%3D0938ce5b6f4c9384b36eeaa7c104e6b3acb5aba3&f=1&nofb=1&ipt=7a4d693534a41e8be2914524e04e9223ccc62bd35a4eba28f7e0ba7cec79268a&ipo=images)
 
+TODO
+
 ---
 
-# Nix with kube
+# Nix and Kube ?
+
+TODO
 
 ---
 
