@@ -20,7 +20,7 @@ https://nixos.org/
 - Your system is broken and there is no undo button...
 - You want to migrate a system installation and configuration to another machine but don't want to redo all the steps you did for installing it..
 - You installed a lot of dependencies during an installation but don't want to bother cleaning it all manually.
-- You have a team who build massive services which always take hours to setup for development.
+- You spend a lot of time setting up environment for development.
 - You want to embrace real reproducibility.
 
 ---
@@ -75,7 +75,7 @@ sh <(curl -L https://nixos.org/nix/install) --daemon
 Once installed, one can **temporarly** install a package using:
 
 ```bash
-nix-shell -p kubectl
+nix-shell -p fastfetch
 ```
 
 ---
@@ -129,18 +129,14 @@ stdenv.mkDerivation {
   buildInputs = [
     pkgs.python311
     pkgs.python311Packages.flask
-    pkgs.docker
-    pkgs.docker-compose
   ];
 
   shellHook = ''
     export FLASK_APP="app.py"
-
+    echo "===================================="
     echo "Welcome to my-python-app environment"
-
-    # docker compose up -d
-    # Ensure Docker services stop when shell exits
-    # trap 'docker compose down' EXIT
+    echo "usage: python3 app.py"
+    echo "===================================="
   '';
 }
 ```
@@ -171,7 +167,7 @@ Pin versions of dependencies in a lock file.
   inputs = {
     nixpkgs.url = "nixpkgs/nixpkgs-24.05-darwin";
   };
-  outputs = { nixpkgs }:
+  outputs = { self, nixpkgs }:
     let
       pkgs = nixpkgs.legacyPackages.aarch64-darwin;
     in
@@ -242,7 +238,7 @@ Pin versions of dependencies in a lock file.
 ## **Want unstable packages ? Yes sir !**
 ```Nix
 {
-  description = "NixOS configuration with two or more channels";
+  description = "A flake with two channels";
 
   inputs = {
     nixpkgs.url = "nixpkgs/nixpkgs-24.05-darwin";
@@ -267,9 +263,9 @@ One docker build can have different output depending when it is done.
 
 Because of:
 ```Dockerfile
-FROM debian:stable
-RUN apt-get update
-RUN apt-get install nginx
+FROM ubuntu:latest
+RUN apt update
+RUN apt install nginx
 ```
 ---
 
@@ -343,6 +339,85 @@ docker run < result
 TODO
 
 ---
+
+# NixOS
+
+NixOS is a **immutable** **declarative** linux distribution that focus on **reproducibility** using the Nix package manager
+
+---
+
+After installation, one can find the nixos configuration file at `/etc/nixos/configuration.nix`
+
+```Nix
+{ pkgs, ... }:
+{
+  imports = [ ./hardware-configuration.nix ];
+
+  boot.loader.systemd-boot.enable = true;
+
+  networking.hostName = "JustAlternate-nixos-computer";
+  networking.networkmanager.enable = true;
+
+  time.timeZone = "Europe/Paris";
+
+  console.keyMap = "fr";
+
+  users.users.justalternate = {
+    isNormalUser = true;
+    extraGroups = [ "networkmanager" "wheel" ];
+  };
+
+  environment.systemPackages = with pkgs; [
+    vim
+    wget
+  ];
+
+  services.openssh.enable = true;
+  system.stateVersion = "24.11";
+}
+```
+
+---
+
+We also have a `hardware-configuration.nix` file containing our hardware auto generated config.
+
+```Nix
+{ config, lib, pkgs, modulesPath, ... }:
+{
+  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-amd" ];
+  boot.extraModulePackages = [ ];
+
+  fileSystems."/" =
+    { device = "/dev/disk/by-uuid/eba54cc4-e684-474c-a38b-d3033e5e657b";
+      fsType = "ext4";
+    };
+
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/E329-BF6B";
+      fsType = "vfat";
+      options = [ "fmask=0077" "dmask=0077" ];
+    };
+
+  swapDevices =
+    [ { device = "/dev/disk/by-uuid/5f0732ca-9d43-432f-8bf9-bad19a61a596"; }
+    ];
+
+  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+}
+
+```
+---
+
+Now lets install application and services on our NixOS machine
+
+...
+
+--- 
+
+
 # Nix tools
 <style scoped>
 section {
@@ -361,12 +436,6 @@ section {
 - <span class="blue">sbtderivation</span>: mkDerivation for sbt, similar to buildGoModule.
 - <span class="blue">nixos-infect</span>: Replace a running non-NixOS Linux host with NixOS.
 
-
----
-
-# NixOS
-
-TODO
 
 ---
 
