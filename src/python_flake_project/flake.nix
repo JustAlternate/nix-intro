@@ -1,35 +1,37 @@
 {
   description = "A Python project with Nix Flakes";
   inputs = {
-    nixpkgs.url = "nixpkgs/nixpkgs-24.05-darwin";
+    # nixpkgs.url = "nixpkgs/nixpkgs-24.05-darwin";
+    nixpkgs.url = "nixpkgs/nixos-24.05";
+
     # We could also specify other inputs such as other flakes
-    # for example a CI flakes which would add our linting, tests... to the project.
   };
-  outputs = { self, nixpkgs }:
+  outputs =
+    { self, nixpkgs }:
     let
-      system = "aarch64-darwin";
+      # system = "aarch64-darwin";
+      system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
     in
     {
       # Define a development shell for the project (callable with nix develop)
       devShells.${system}.default = pkgs.mkShell {
         # Package that we want to use in our development environment
-        buildInputs = with pkgs;
-          [
-            # Packages needed to dev in the project
-            python311
-            python311Packages.flask
-            docker
-            docker-compose
-            # tools
-            jq
-            # Linter / formatters...
-            black
-            ruff
-            # git shenanigans
-            git
-            pre-commit
-          ];
+        buildInputs = with pkgs; [
+          # Packages needed to dev in the project
+          python311
+          python311Packages.flask
+          docker
+          docker-compose
+          # tools
+          jq
+          # Linter / formatters...
+          black
+          ruff
+          # git shenanigans
+          git
+          pre-commit
+        ];
 
         shellHook = ''
           echo "Setup env params"
