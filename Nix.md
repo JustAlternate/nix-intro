@@ -36,7 +36,7 @@ section {
 # **What can Nix offer**
 
 - Reproducible development environments.
-- <span class="gray">Easy installation of software over URLs.</span>
+- Easy installation of software over URLs.
 - Easy transfer of development environments between machines.
 - Declarative and reproducible specification of Linux machines.
 - <span class="gray">Reproducible integration testing using virtual machines.</span>
@@ -45,8 +45,8 @@ section {
 - Transparent build caching using binary caches.
 - <span class="gray">Strong support for software auditability.</span>
 - <span class="gray">First-class cross compilation support.</span>
-- <span class="gray"> Remote builds.</span>
-- <span class="gray"> Remote deployments.</span>
+- <span class="gray">Remote builds.</span>
+- <span class="gray">Remote deployments.</span>
 - Atomic upgrades and rollbacks.
 
 ---
@@ -199,7 +199,7 @@ Pin versions of dependencies in a lock file.
           docker compose up -d
           trap 'docker compose down' EXIT
 
-          echo "Configure pre-commit to reduce circle-ci costs"
+          echo "Configure pre-commit to reduce ci costs"
           pre-commit install --hook-type pre-commit
         '';
       };
@@ -359,14 +359,13 @@ section {
 - <span class="blue">compose2nix</span>: Generate a NixOS config from a Docker Compose project (only for NixOS)
 - <span class="blue">composer2nix</span>: Generate Nix expressions to build composer packages.
 - <span class="blue">sbtderivation</span>: mkDerivation for sbt, similar to buildGoModule.
-- <span class="blue">nixos-infect</span>: Replace a running non-NixOS Linux host with NixOS.
-
+- <span class="blue">nixos-infect</span>: Replace a running non-NixOS Linux host on the cloud with NixOS.
 
 ---
 
 # NixOS
 
-TODO
+NixOS is a linux distribution that commit on the declarative and reproducible aspect of Nix.
 
 ---
 
