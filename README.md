@@ -45,8 +45,8 @@ section {
 - Transparent build caching using binary caches.
 - <span class="gray">Strong support for software auditability.</span>
 - <span class="gray">First-class cross compilation support.</span>
-- <span class="gray">Remote builds.</span>
-- <span class="gray">Remote deployments.</span>
+- <span>Remote builds.</span>
+- <span>Remote deployments.</span>
 - Atomic upgrades and rollbacks.
 
 ---

@@ -3,7 +3,6 @@
   inputs = {
     # nixpkgs.url = "nixpkgs/nixpkgs-24.05-darwin";
     nixpkgs.url = "nixpkgs/nixos-24.05";
-
     # We could also specify other inputs such as other flakes
   };
   outputs =
