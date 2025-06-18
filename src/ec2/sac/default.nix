@@ -2,8 +2,18 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./glance.nix
   ];
+
+  services = {
+    immich = {
+      enable = true;
+      port = 80;
+      openFirewall = true;
+      settings = {
+        passwordLogin.enable = false;
+      };
+    };
+  };
 
   environment.systemPackages = with pkgs; [
     vim
